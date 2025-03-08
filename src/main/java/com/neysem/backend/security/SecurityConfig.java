@@ -1,5 +1,6 @@
 package com.neysem.backend.security;
 
+import com.neysem.backend.model.Role;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Auth endpointlerini serbest bırak
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // ADMIN yetkisi gerekli
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // USER veya ADMIN yetkisi gerekli
+                        .requestMatchers("/restorant/**").hasRole(Role.MANAGER.name()) // ADMIN yetkisi gerekli
+                        .requestMatchers("/user/**").hasAnyRole(Role.CUSTOMER.name(), Role.MANAGER.name()) // USER veya ADMIN yetkisi gerekli
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt); // JWT ile doğrulama yap

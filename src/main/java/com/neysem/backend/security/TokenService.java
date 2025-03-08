@@ -22,7 +22,7 @@ public class TokenService {
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("roles", user.getRoles().stream().map(Role::name).collect(Collectors.toList()))
+                .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

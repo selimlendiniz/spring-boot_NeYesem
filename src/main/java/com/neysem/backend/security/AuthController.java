@@ -1,8 +1,11 @@
 package com.neysem.backend.security;
 
+import com.neysem.backend.model.Customer;
+import com.neysem.backend.model.Manager;
 import com.neysem.backend.model.Role;
 import com.neysem.backend.model.User;
-import com.neysem.backend.repo.UserRepository;
+import com.neysem.backend.repo.CustomerRepository;
+import com.neysem.backend.repo.ManagerRepository;
 import com.neysem.backend.security.dto.AuthRequest;
 import com.neysem.backend.security.dto.AuthResponse;
 import com.neysem.backend.security.dto.RefreshTokenRequest;
@@ -14,12 +17,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,7 +29,8 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
@@ -37,7 +39,7 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = findUserByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String accessToken = tokenService.generateAccessToken(user);
@@ -50,7 +52,7 @@ public class AuthController {
     public ResponseEntity<?> refresh(@RequestBody RefreshTokenRequest request) {
         String username = tokenService.extractUsername(request.getRefreshToken());
 
-        User user = userRepository.findByUsername(username)
+        User user = findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String newAccessToken = tokenService.generateAccessToken(user);
@@ -59,17 +61,32 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (findUserByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username is already taken.");
         }
 
-        User newUser = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword())) // Şifreyi hashle
-                .roles(List.of(Role.USER)) // Varsayılan olarak USER rolü
-                .build();
+        if (request.getRole() == Role.MANAGER) {
+            Manager newUser = Manager.builder()
+                    .username(request.getUsername())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.MANAGER)
+                    .build();
+            managerRepository.save(newUser);
+        } else {
+            Customer newUser = Customer.builder()
+                    .username(request.getUsername())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.CUSTOMER)
+                    .build();
+            customerRepository.save(newUser);
+        }
 
-        userRepository.save(newUser);
         return ResponseEntity.ok("User registered successfully.");
+    }
+
+    private Optional<User> findUserByUsername(String username) {
+        return customerRepository.findByUsername(username)
+                .map(c -> (User) c)
+                .or(() -> managerRepository.findByUsername(username).map(m -> (User) m));
     }
 }
