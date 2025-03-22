@@ -70,6 +70,9 @@ public class AuthController {
                     .username(request.getUsername())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.MANAGER)
+                    .email(request.getEmail())
+                    .name(request.getUsername())
+                    .surname(request.getSurname())
                     .build();
             managerRepository.save(newUser);
         } else {
@@ -77,6 +80,9 @@ public class AuthController {
                     .username(request.getUsername())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.CUSTOMER)
+                    .email(request.getEmail())
+                    .name(request.getUsername())
+                    .surname(request.getSurname())
                     .build();
             customerRepository.save(newUser);
         }

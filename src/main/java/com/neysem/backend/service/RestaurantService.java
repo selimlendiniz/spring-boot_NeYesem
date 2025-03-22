@@ -1,26 +1,27 @@
 package com.neysem.backend.service;
 
+import com.neysem.backend.dto.GetRestaurantProfileResponse;
 import com.neysem.backend.dto.SaveRestaurantRequest;
+import com.neysem.backend.dto.SaveRestaurantResponse;
+import com.neysem.backend.mapper.RestaurantMapper;
 import com.neysem.backend.model.Manager;
 import com.neysem.backend.model.Restaurant;
-import com.neysem.backend.model.User;
 import com.neysem.backend.repo.ManagerRepository;
 import com.neysem.backend.repo.RestaurantRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final ManagerRepository managerRepository;
+    private final RestaurantMapper restaurantMapper;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, ManagerRepository managerRepository) {
-        this.restaurantRepository = restaurantRepository;
-        this.managerRepository = managerRepository;
-    }
-
-    public Restaurant saveRestaurant(SaveRestaurantRequest request) {
+    @Transactional
+    public SaveRestaurantResponse saveRestaurant(SaveRestaurantRequest request) {
 
 
         Manager manager = managerRepository.findByUsername(
@@ -34,7 +35,19 @@ public class RestaurantService {
                 .phone(request.getPhone())
                 .email(request.getEmail())
                 .build();
-        return restaurantRepository.save(restaurant);
+
+        // İlişkiyi iki yönlü senkronize et
+        restaurant.setManager(manager);
+        manager.setRestaurant(restaurant);  // Burası eksikti!
+
+        return restaurantMapper.toDto(restaurantRepository.save(restaurant));
     }
 
+    public Restaurant getRestaurant(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("Restaurant not found!"));
+    }
+
+    public GetRestaurantProfileResponse getRestaurantProfile(Long restaurantId) {
+        return restaurantMapper.toDto1(getRestaurant(restaurantId));
+    }
 }

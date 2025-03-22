@@ -18,9 +18,16 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
+    private String surname;
+
     private String username;
+
     private String password;
+
     private String email;
 
     private Role role;
+
 }

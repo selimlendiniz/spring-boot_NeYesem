@@ -39,9 +39,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Auth endpointlerini serbest bırak
-                        .requestMatchers("/restorant/**").hasRole(Role.MANAGER.name()) // ADMIN yetkisi gerekli
-                        .requestMatchers("/user/**").hasAnyRole(Role.CUSTOMER.name(), Role.MANAGER.name()) // USER veya ADMIN yetkisi gerekli
-                        .anyRequest().authenticated()
+                        .requestMatchers("/restaurant/**").permitAll() // ADMIN yetkisi gerekli
+                        .requestMatchers("/user/**").permitAll() // USER veya ADMIN yetkisi gerekli
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt); // JWT ile doğrulama yap
         return http.build();

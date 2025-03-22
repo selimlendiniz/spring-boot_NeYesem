@@ -1,26 +1,27 @@
 package com.neysem.backend.controller;
 
+import com.neysem.backend.dto.GetRestaurantProfileResponse;
 import com.neysem.backend.dto.SaveRestaurantRequest;
-import com.neysem.backend.model.Restaurant;
-import com.neysem.backend.repo.RestaurantRepository;
+import com.neysem.backend.dto.SaveRestaurantResponse;
 import com.neysem.backend.service.RestaurantService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/restaurant")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
+    @PostMapping
+    public SaveRestaurantResponse saveRestaurant(@RequestBody SaveRestaurantRequest request) {
+        return restaurantService.saveRestaurant(request);
     }
 
-    @PostMapping
-    public Restaurant saveRestaurant(@RequestBody SaveRestaurantRequest request) {
-        return restaurantService.saveRestaurant(request);
+    @GetMapping("/{restaurantId}")
+    public GetRestaurantProfileResponse getRestaurantProfile(@PathVariable("restaurantId") Long restaurantId) {
+        System.out.println("restaurantId: " + restaurantId);
+        return restaurantService.getRestaurantProfile(restaurantId);
     }
 }
