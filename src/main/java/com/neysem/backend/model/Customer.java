@@ -1,5 +1,6 @@
 package com.neysem.backend.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -18,8 +19,7 @@ public class Customer extends User {
 
     private String address;
 
-    @OneToMany
-    @JoinColumn(name = "manager_id")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList;
 
 }
