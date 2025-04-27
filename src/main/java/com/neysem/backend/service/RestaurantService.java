@@ -1,5 +1,6 @@
 package com.neysem.backend.service;
 
+import com.neysem.backend.dto.GetAllRestaurantByNameResponse;
 import com.neysem.backend.dto.GetRestaurantProfileResponse;
 import com.neysem.backend.dto.SaveRestaurantRequest;
 import com.neysem.backend.dto.SaveRestaurantResponse;
@@ -12,6 +13,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,4 +53,10 @@ public class RestaurantService {
     public GetRestaurantProfileResponse getRestaurantProfile(Long restaurantId) {
         return restaurantMapper.toDto1(getRestaurant(restaurantId));
     }
+
+    public List<GetAllRestaurantByNameResponse> getAllRestaurantByName(String name) {
+        List<Restaurant> restaurant = restaurantRepository.findTop5ByNameContainingIgnoreCase(name);
+        return restaurantMapper.toDto2(restaurant);
+    }
+
 }

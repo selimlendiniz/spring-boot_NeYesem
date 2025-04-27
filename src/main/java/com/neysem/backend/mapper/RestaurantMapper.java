@@ -1,11 +1,14 @@
 package com.neysem.backend.mapper;
 
+import com.neysem.backend.dto.GetAllRestaurantByNameResponse;
 import com.neysem.backend.dto.GetRestaurantProfileResponse;
 import com.neysem.backend.dto.SaveRestaurantResponse;
 import com.neysem.backend.model.Restaurant;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING,uses = {CommentMapper.class})
+import java.util.List;
+
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {CommentMapper.class})
 public interface RestaurantMapper {
     @Mapping(source = "managerEmail", target = "manager.email")
     @Mapping(source = "managerUsername", target = "manager.username")
@@ -36,4 +39,11 @@ public interface RestaurantMapper {
     @InheritConfiguration(name = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Restaurant partialUpdate(GetRestaurantProfileResponse getRestaurantProfileResponse, @MappingTarget Restaurant restaurant);
+
+    Restaurant toEntity(GetAllRestaurantByNameResponse getAllRestaurantByNameResponse);
+
+    List<GetAllRestaurantByNameResponse> toDto2(List<Restaurant> restaurant);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Restaurant partialUpdate(GetAllRestaurantByNameResponse getAllRestaurantByNameResponse, @MappingTarget Restaurant restaurant);
 }
