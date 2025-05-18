@@ -30,4 +30,7 @@ public class Comment {
 
     private String comment;
 
+    @Column(nullable = false)
+    private Double rating;
+
 }

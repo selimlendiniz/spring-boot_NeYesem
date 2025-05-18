@@ -29,6 +29,7 @@ public class CommentService {
                 .customer(customer)
                 .restaurant(restaurantService.getRestaurant(saveCommentRequest.restaurantId()))
                 .comment(saveCommentRequest.comment())
+                .rating(saveCommentRequest.rating())
                 .build();
 
         comment = commentRepository.save(comment);

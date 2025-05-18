@@ -17,8 +17,6 @@ import java.util.List;
 @SuperBuilder
 public class Customer extends User {
 
-    private String address;
-
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList;
 

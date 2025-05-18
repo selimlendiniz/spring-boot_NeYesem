@@ -13,10 +13,12 @@ public interface CommentMapper {
     @Mapping(source = "restaurant.name", target = "restaurantName")
     @Mapping(source = "customer.username", target = "customerUsername")
     @Mapping(source = "comment", target = "comment")
+    @Mapping(source = "rating", target = "rating")
     SaveCommentResponse toDto(Comment comment);
 
     @Mapping(source = "customer.name", target = "customerName")
     @Mapping(source = "customer.surname", target = "customerSurname")
     @Mapping(source = "comment", target = "comment")
+    @Mapping(source = "rating", target = "rating")
     GetRestaurantProfileResponse.CommentDto toCommentDto(Comment comment);
 }

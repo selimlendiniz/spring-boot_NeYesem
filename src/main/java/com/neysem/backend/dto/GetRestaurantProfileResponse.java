@@ -10,6 +10,6 @@ public record GetRestaurantProfileResponse(Long id, String managerName, String m
     /**
      * DTO for {@link com.neysem.backend.model.Comment}
      */
-    public record CommentDto(Long id, String customerName, String customerSurname, String comment) implements Serializable {
+    public record CommentDto(Long id, String customerName, String customerSurname, String comment, Double rating) implements Serializable {
     }
 }

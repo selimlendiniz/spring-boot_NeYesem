@@ -1,9 +1,7 @@
 package com.neysem.backend.dto;
 
 import com.neysem.backend.model.Comment;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 
@@ -12,6 +10,7 @@ import java.io.Serializable;
  */
 public record SaveCommentRequest(
         Long restaurantId,
-        @NotNull @NotEmpty @NotBlank String comment
+        @NotNull @NotEmpty @NotBlank String comment,
+        @Min(1) @Max(5) Double rating
 ) implements Serializable {
 }

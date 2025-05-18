@@ -10,6 +10,7 @@ import java.io.Serializable;
 public record SaveCommentResponse(
         String restaurantName,
         String customerUsername,
-        String comment
+        String comment,
+        Double rating
 ) implements Serializable {
   }
